@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebRTC Signaling Lab</title>
+    <style>
+        p {
+            margin-left: 20px;
+        }
+
+        textarea {
+            width: 70%;
+            height: 100px;
+        }
+
+        textarea[readonly] {
+            background: #ddd;
+        }
+
+        hr {
+            width: calc(70% + 40px);
+            margin-left: 0;
+        }
+    </style>
+</head>
+<body>
+<h1>WebRTC Labs</h1>
+This page allows you to do WebRTC signalling manually to understand how WebRTC signalling works.
+
+<h2>Instruction</h2>
+In this setup, there are two machines, referred here as <strong>Machine A</strong> and <strong>Machine B</strong>.
+<strong>Machine A</strong> is the machine initiating the connection.
+
+<ol>
+    <li>On <strong>Machine A</strong>, click <code>createOffer</code> and copy the offer to the clipboard.</li>
+    <li>On <strong>Machine A</strong>, call <code>setLocalDescription</code> with the offer.</li>
+    <li>On <strong>Machine B</strong>, call <code>setRemoteDescription</code> with the offer.</li>
+    <li>On <strong>Machine A</strong>, click <code>createAnswer</code> and copy the answer to the clipboard.</li>
+    <li>On <strong>Machine B</strong>, call <code>setLocalDescription</code> with the answer.</li>
+    <li>On <strong>Machine A</strong>, call <code>setRemoteDescription</code> with the answer.</li>
+    <li>On <strong>Machine A</strong>, copy <code>ICE candidate</code> to the clipboard.</li>
+    <li>On <strong>Machine B</strong>, call <code>addIceCandidate</code> with the ICE candidate.</li>
+    <li>On <strong>Machine B</strong>, copy <code>ICE candidate</code> to the clipboard.</li>
+    <li>On <strong>Machine A</strong>, call <code>addIceCandidate</code> with the ICE candidate.</li>
+    <li>Both machines should now be connected.</li>
+    <li>On <strong>Machine A</strong>, call <code>sendMessage</code> with your desired message.</li>
+    <li>On <strong>Machine B</strong>, you should now be able to see the received message.</li>
+</ol>
+
+<hr>
+
+<p>
+    Connection State: <span id="connectionstate"></span>
+    <br>
+    Signaling State: <span id="signalingstate"></span>
+    <br>
+    ICE Gathering State: <span id="icegatheringstate"></span>
+</p>
+
+<hr>
+
+<p id="createOffer">
+    <button>createOffer</button>
+    <br>
+    <textarea placeholder="Offer will appear here" readonly></textarea>
+</p>
+
+<hr>
+
+<p id="createAnswer">
+    <button>createAnswer</button>
+    <br>
+    <textarea placeholder="Answer will appear here" readonly></textarea>
+</p>
+
+
+<hr>
+
+<p id="setLocalDescription">
+    <textarea placeholder="Paste offer/answer here"></textarea>
+    <br>
+    <button>setLocalDescription</button>
+</p>
+
+<hr>
+
+<p id="setRemoteDescription">
+    <textarea placeholder="Paste offer/answer here"></textarea>
+    <br>
+    <button>setRemoteDescription</button>
+</p>
+
+<hr>
+
+<p id="onicecandidate">
+    ICE candidate
+    <br>
+    <textarea placeholder="ICE candidate will appear here" readonly></textarea>
+</p>
+
+<hr>
+
+<p id="addIceCandidate">
+    <textarea placeholder="Paste ICE candidate here"></textarea>
+    <br>
+    <button>addIceCandidate</button>
+</p>
+
+<hr>
+
+<p id="sendMessage">
+    <textarea placeholder="Paste message here"></textarea>
+    <br>
+    <button>sendMessage</button>
+</p>
+
+<hr>
+
+<p id="onReceiveMessage">
+    Received message
+    <br>
+    <textarea placeholder="Received message will appear here" readonly></textarea>
+</p>
+
+<script>
+    const configuration = {
+      'iceServers': [
+        {
+          'urls': 'stun:stun.l.google.com:19302'
+        }
+      ]
+    };
+    const pc = new RTCPeerConnection(configuration);
+    let channel = null;
+
+    function setCallback(id, func) {
+      const p = document.getElementById(id);
+      const button = p.getElementsByTagName("button")[0];
+      const textarea = p.getElementsByTagName("textarea")[0];
+      button.onclick = function() {
+        func(textarea);
+      }
+    }
+
+    function initChannel() {
+      channel.onmessage = function(event) {
+        document.getElementById('onReceiveMessage').getElementsByTagName('textarea')[0].value = event.data;
+      }
+    }
+
+    pc.onconnectionstatechange = function() {
+      document.getElementById('connectionstate').innerHTML = pc.connectionState;
+    }
+
+    pc.onsignalingstatechange = function() {
+      document.getElementById('signalingstate').innerHTML = pc.signalingState;
+    }
+
+    pc.onicegatheringstatechange = function() {
+      document.getElementById('icegatheringstate').innerHTML = pc.iceGatheringState;
+    }
+
+    setCallback("createOffer", async textarea => {
+      channel = pc.createDataChannel('channel');
+      initChannel();
+      textarea.value = JSON.stringify(await pc.createOffer());
+    });
+
+    setCallback("createAnswer", async textarea => {
+      textarea.value = JSON.stringify(await pc.createAnswer());
+    });
+
+    setCallback("setLocalDescription", async textarea => {
+      await pc.setLocalDescription(JSON.parse(textarea.value));
+    });
+
+    setCallback("setRemoteDescription", async textarea => {
+      await pc.setRemoteDescription(JSON.parse(textarea.value));
+    });
+
+    pc.onicecandidate = ({candidate}) => {
+      if (candidate) {
+        const json = JSON.stringify(candidate);
+        const element = document.getElementById('onicecandidate').getElementsByTagName('textarea')[0];
+        if (element.value) {
+          element.value += "\n" + json;
+        } else {
+          element.value = json;
+        }
+      }
+    };
+
+    setCallback("addIceCandidate", async textarea => {
+      for (let line of textarea.value.split("\n")) {
+        await pc.addIceCandidate(JSON.parse(line));
+      }
+    });
+
+    pc.ondatachannel = (event) => {
+      channel = event.channel;
+      initChannel();
+    };
+
+    setCallback("sendMessage", async textarea => {
+      channel.send(textarea.value);
+    });
+</script>
+</body>
+</html>
