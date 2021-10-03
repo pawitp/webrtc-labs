@@ -2,6 +2,8 @@
 <html>
 <head>
     <title>WebRTC Signaling Lab</title>
+    <link rel="stylesheet" href="https://unpkg.com/intro.js/minified/introjs.min.css">
+    <script src="https://unpkg.com/intro.js/minified/intro.min.js"></script>
     <style>
         p {
             margin-left: 20px;
@@ -24,6 +26,7 @@
 </head>
 <body>
 <h1>WebRTC Labs</h1>
+<h2 id="machinetype"></h2>
 This page allows you to do WebRTC signalling manually to understand how WebRTC signalling works.
 
 <h2>Instruction</h2>
@@ -124,6 +127,144 @@ See a demo: <a href="https://youtu.be/NJdkgs6hYU0">https://youtu.be/NJdkgs6hYU0<
 </p>
 
 <script>
+  function introIntiator(){
+    introJs().setOptions({
+    steps: [{
+    title: 'Welcome',
+    intro: `Hello World! 👋 <a 
+    <a  href="#" onclick="window.open('/signaling.html?machine=b','popup','width=600,height=600'); return false;">hi</a>
+    `
+  },
+  {
+    title: 'Step 1',
+    element: document.querySelector('#createOffer'),
+    intro: 'On Machine A, click createOffer and copy the offer to the clipboard. 👋'
+  },
+  {
+    title: 'Step 2',
+    element: document.querySelector('#setLocalDescription'),
+    intro: 'On Machine A, call setLocalDescription with the offer.'
+  },
+  {
+    title: 'Step 3', 
+    intro: `
+    <a  href="#" onclick="window.open('/signaling.html?machine=b','popup','width=600,height=600'); return false;">Click here</a>
+    for opening new window.`
+  },
+  {
+    title: 'Step 4', 
+    element: document.querySelector('#setRemoteDescription'),
+    intro: 'On Machine A, click createAnswer and copy the answer to the clipboard.'
+  },
+  {
+    title: 'Step 5',  
+    intro: 'Waiting for: Machine B, call setLocalDescription with the answer.'
+  },
+  {
+    title: 'Step 6', 
+    element: document.querySelector('#setRemoteDescription'),
+    intro: 'On Machine A, call setRemoteDescription with the answer.'
+  },
+  {
+    title: 'Step 7', 
+    element: document.querySelector('#onicecandidate'),
+    intro: 'On Machine A, copy ICE candidate to the clipboard.'
+  },
+  {
+    title: 'Step 8', 
+    intro: 'On Machine B, call addIceCandidate with the ICE candidate.'
+  },
+  {
+    title: 'Step 9', 
+    element: document.querySelector('#onicecandidate'),
+    intro: 'On Machine B, copy ICE candidate to the clipboard.'
+  },
+  {
+    title: 'Step 10', 
+    element: document.querySelector('#addIceCandidate'),
+    intro: 'On Machine A, call addIceCandidate with the ICE candidate.'
+  },
+  {
+    title: 'Step 11', 
+    intro: 'Both machines should now be connected.'
+  },
+  {
+    title: 'Step 12', 
+    intro: 'On Machine A, call sendMessage with your desired message.',
+    element: document.querySelector('#sendMessage'),
+  },
+  {
+    title: 'Step 13', 
+    intro: 'On Machine B, you should now be able to see the received message.'
+  },
+]
+      }).start();
+  }
+  function introReceiver(){
+    introJs().setOptions({
+    steps: [{
+    title: 'Hi, there 👋',
+    intro: `This window is simulated as receiver. We will cal this window as <strong style="color:orange;">Machine B</strong>
+    `,
+    element: document.querySelector('#machinetype'),
+  },
+  {
+    title: 'Step 1',  
+    intro: 'call setLocalDescription with the answer.',
+    element: document.querySelector('#setLocalDescription'),
+  },
+  {
+    title: 'Step 2', 
+    intro: 'call addIceCandidate with the ICE candidate.',
+    element: document.querySelector('#addIceCandidate'),
+  },
+  {
+    title: 'Step 3', 
+    element: document.querySelector('#onicecandidate'),
+    intro: 'copy ICE candidate to the clipboard.'
+  },
+  {
+    title: 'Step 4', 
+    intro: 'Back to <strong style="color:green;">Machine A</strong>, call addIceCandidate with the ICE candidate.'
+  },
+  {
+    title: 'Step 5', 
+    intro: 'Both machines should now be connected.'
+  },
+  {
+    title: 'Step 6', 
+    intro: 'Back to Machine <strong style="color:green;">Machine A</strong>, call sendMessage with your desired message.',
+    element: document.querySelector('#sendMessage'),
+  },
+  {
+    title: 'Step 7', 
+    intro: 'you should now be able to see the received message.'
+  },
+]
+      }).start();
+  }
+  
+ function intro(){
+    console.log('ready!')
+    const url = new URL(window.location.href)
+    const machineType = url.searchParams.get("machine")
+    const MACHINE_TYPE = {
+      RECEIVER:`b`
+    }
+    console.log(machineType)
+    if(machineType!==MACHINE_TYPE.RECEIVER) {
+      const dom = document.getElementById("machinetype")
+      dom.innerHTML = "Machine A"
+      dom.style = `color:green;`
+      introIntiator()
+    }
+    else{
+      const dom = document.getElementById("machinetype")
+      dom.innerHTML = "Machine B"
+      dom.style = `color:orange;`
+      introReceiver()
+    }
+ }
     const configuration = {
       'iceServers': [
         {
