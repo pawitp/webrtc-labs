@@ -1,36 +1,44 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>WebRTC Signaling Lab</title>
-    <style>
-        p {
-            margin-left: 20px;
-        }
+  <title>WebRTC Signaling Lab</title>
+  <link rel="stylesheet" href="https://unpkg.com/intro.js@4.2.2/minified/introjs.min.css">
+  <script src="https://unpkg.com/intro.js@4.2.2/minified/intro.min.js"></script>
+  <style>
+    p {
+      margin-left: 20px;
+    }
 
-        textarea {
-            width: 70%;
-            height: 100px;
-        }
+    textarea {
+      width: 70%;
+      height: 100px;
+    }
 
-        textarea[readonly] {
-            background: #ddd;
-        }
+    textarea[readonly] {
+      background: #ddd;
+    }
 
-        hr {
-            width: calc(70% + 40px);
-            margin-left: 0;
-        }
-    </style>
+    hr {
+      width: calc(70% + 40px);
+      margin-left: 0;
+    }
+  </style>
 </head>
+
 <body>
-<h1>WebRTC Labs</h1>
-This page allows you to do WebRTC signalling manually to understand how WebRTC signalling works.
+  <h1>WebRTC Labs</h1>
+  <h2 id="machinetype"></h2>
+  This page allows you to do WebRTC signalling manually to understand how WebRTC signalling works.
 
-<h2>Instruction</h2>
-In this setup, there are two machines, referred here as <strong>Machine A</strong> and <strong>Machine B</strong>.
-<strong>Machine A</strong> is the machine initiating the connection.
+  <h2>Tour</h2>
+  Let us guide you <button onclick="intro()">on tour~</button>
 
-<ol>
+  <h2>Instruction</h2>
+  In this setup, there are two machines, referred here as <strong>Machine A</strong> and <strong>Machine B</strong>.
+  <strong>Machine A</strong> is the machine initiating the connection.
+
+  <ol>
     <li>On <strong>Machine A</strong>, click <code>createOffer</code> and copy the offer to the clipboard.</li>
     <li>On <strong>Machine A</strong>, call <code>setLocalDescription</code> with the offer.</li>
     <li>On <strong>Machine B</strong>, call <code>setRemoteDescription</code> with the offer.</li>
@@ -44,86 +52,236 @@ In this setup, there are two machines, referred here as <strong>Machine A</stron
     <li>Both machines should now be connected.</li>
     <li>On <strong>Machine A</strong>, call <code>sendMessage</code> with your desired message.</li>
     <li>On <strong>Machine B</strong>, you should now be able to see the received message.</li>
-</ol>
+  </ol>
 
-See a demo: <a href="https://youtu.be/NJdkgs6hYU0">https://youtu.be/NJdkgs6hYU0</a>
+  See a demo: <a href="https://youtu.be/NJdkgs6hYU0">https://youtu.be/NJdkgs6hYU0</a>
 
-<hr>
+  <hr>
 
-<p>
+  <p>
     Connection State: <span id="connectionstate"></span>
     <br>
     Signaling State: <span id="signalingstate"></span>
     <br>
     ICE Gathering State: <span id="icegatheringstate"></span>
-</p>
+  </p>
 
-<hr>
+  <hr>
 
-<p id="createOffer">
+  <p id="createOffer">
     <button>createOffer</button>
     <br>
     <textarea placeholder="Offer will appear here" readonly></textarea>
-</p>
+  </p>
 
-<hr>
+  <hr>
 
-<p id="createAnswer">
+  <p id="createAnswer">
     <button>createAnswer</button>
     <br>
     <textarea placeholder="Answer will appear here" readonly></textarea>
-</p>
+  </p>
 
 
-<hr>
+  <hr>
 
-<p id="setLocalDescription">
+  <p id="setLocalDescription">
     <textarea placeholder="Paste offer/answer here"></textarea>
     <br>
     <button>setLocalDescription</button>
-</p>
+  </p>
 
-<hr>
+  <hr>
 
-<p id="setRemoteDescription">
+  <p id="setRemoteDescription">
     <textarea placeholder="Paste offer/answer here"></textarea>
     <br>
     <button>setRemoteDescription</button>
-</p>
+  </p>
 
-<hr>
+  <hr>
 
-<p id="onicecandidate">
+  <p id="onicecandidate">
     ICE candidate
     <br>
     <textarea placeholder="ICE candidate will appear here" readonly></textarea>
-</p>
+  </p>
 
-<hr>
+  <hr>
 
-<p id="addIceCandidate">
+  <p id="addIceCandidate">
     <textarea placeholder="Paste ICE candidate here"></textarea>
     <br>
     <button>addIceCandidate</button>
-</p>
+  </p>
 
-<hr>
+  <hr>
 
-<p id="sendMessage">
+  <p id="sendMessage">
     <textarea placeholder="Paste message here"></textarea>
     <br>
     <button>sendMessage</button>
-</p>
+  </p>
 
-<hr>
+  <hr>
 
-<p id="onReceiveMessage">
+  <p id="onReceiveMessage">
     Received message
     <br>
     <textarea placeholder="Received message will appear here" readonly></textarea>
-</p>
+  </p>
 
-<script>
+  <script>
+    function introIntiator() {
+      introJs().setOptions({
+        steps: [{
+          title: 'Welcome',
+          intro: `Hello 👋 , we will assume you as <strong style="color:green;">Machine A</strong>
+    `,
+          element: document.querySelector('#machinetype'),
+
+        },
+        {
+          title: 'Step 1',
+          element: document.querySelector('#createOffer'),
+          intro: 'On <strong style="color:green;">Machine A</strong>, click createOffer and copy the offer to the clipboard. 👋'
+        },
+        {
+          title: 'Step 2',
+          element: document.querySelector('#setLocalDescription'),
+          intro: 'On <strong style="color:green;">Machine A</strong>, call setLocalDescription with the offer that you copied.'
+        },
+        {
+          title: 'Step 3',
+          intro: `
+    <a  href="#" onclick="window.open('/signaling.html?machine=b','popup','width=600,height=600'); return false;">Click here</a>
+    for opening new window. We will start <strong style="color:orange;">Machine B</strong>`
+        },
+        {
+          title: 'Step 4',
+          element: document.querySelector('#setRemoteDescription'),
+          intro: 'On <strong style="color:green;">Machine A</strong>, call setRemoteDescription with the answer.'
+        },
+        {
+          title: 'Step 5',
+          element: document.querySelector('#onicecandidate'),
+          intro: 'On <strong style="color:green;">Machine A</strong>, copy ICE candidate to the clipboard.'
+        },
+        {
+          title: 'Step 6',
+          intro: 'On <strong style="color:orange;">Machine B</strong>, call addIceCandidate with the ICE candidate.'
+        },
+        {
+          title: 'Step 7',
+          element: document.querySelector('#addIceCandidate'),
+          intro: 'On <strong style="color:green;">Machine A</strong>, call addIceCandidate with the ICE candidate.'
+        },
+        {
+          title: 'Step 8',
+          intro: 'Both machines should now be connected.'
+        },
+        {
+          title: 'Step 9',
+          intro: 'On <strong style="color:green;">Machine A</strong>, call sendMessage with your desired message.',
+          element: document.querySelector('#sendMessage'),
+        },
+        {
+          title: 'Step 10',
+          intro: 'On <strong style="color:orange;">Machine B</strong>, you should now be able to see the received message.'
+        },
+        ]
+      }).start();
+    }
+    
+    function introReceiver() {
+      introJs().setOptions({
+        steps: [{
+          title: 'Hi, there 👋',
+          intro: `This window is simulated as the receiver. We will call this window <strong style="color:orange;">Machine B</strong>
+    `,
+          element: document.querySelector('#machinetype'),
+        },
+        {
+          title: 'Step 1',
+          intro: 'call setRemoteDescription with the offer that you copied',
+          element: document.querySelector('#setRemoteDescription'),
+        },
+        {
+          title: 'Step 2',
+          element: document.querySelector('#createAnswer'),
+          intro: 'click createAnswer and copy the answer to the clipboard.'
+        },
+        {
+          title: 'Step 3',
+          intro: 'setLocalDescription with the answer',
+          element: document.querySelector('#setLocalDescription'),
+        },
+        {
+          title: 'Step 4',
+          intro: 'Back to <strong style="color:green;">Machine A</strong>, call setRemoteDescription with the answer.'
+        },
+        {
+          title: 'Step 5',
+          intro: 'call addIceCandidate with the ICE candidate.',
+          element: document.querySelector('#addIceCandidate'),
+        },
+        {
+          title: 'Step 6',
+          element: document.querySelector('#onicecandidate'),
+          intro: 'copy ICE candidate to the clipboard.'
+        },
+        {
+          title: 'Step 7',
+          intro: 'Back to <strong style="color:green;">Machine A</strong>, call addIceCandidate with the ICE candidate.'
+        },
+        {
+          title: 'Step 8',
+          intro: 'Both machines should now be connected.'
+        },
+        {
+          title: 'Step 9',
+          intro: 'you should now be able to see the received message.',
+          element: document.querySelector('#onReceiveMessage'),
+        },
+        ]
+      }).start();
+    }
+
+    const MACHINE_TYPE = {
+      RECEIVER: `b`
+    }
+
+    function init() {
+      const url = new URL(window.location.href)
+      const machineType = url.searchParams.get("machine")
+      if (machineType === MACHINE_TYPE.RECEIVER) {
+        const dom = document.getElementById("machinetype")
+        dom.innerHTML = "Machine B"
+        dom.style = `color:orange;`
+        introReceiver()
+      }
+    }
+    init()
+
+    function intro() {
+      const url = new URL(window.location.href)
+      const machineType = url.searchParams.get("machine")
+
+      if (machineType !== MACHINE_TYPE.RECEIVER) {
+        const dom = document.getElementById("machinetype")
+        dom.innerHTML = "Machine A"
+        dom.style = `color:green;`
+        introIntiator()
+      }
+      else {
+        const dom = document.getElementById("machinetype")
+        dom.innerHTML = "Machine B"
+        dom.style = `color:orange;`
+        introReceiver()
+      }
+    }
+
+
     const configuration = {
       'iceServers': [
         {
@@ -138,26 +296,26 @@ See a demo: <a href="https://youtu.be/NJdkgs6hYU0">https://youtu.be/NJdkgs6hYU0<
       const p = document.getElementById(id);
       const button = p.getElementsByTagName("button")[0];
       const textarea = p.getElementsByTagName("textarea")[0];
-      button.onclick = function() {
+      button.onclick = function () {
         func(textarea);
       }
     }
 
     function initChannel() {
-      channel.onmessage = function(event) {
+      channel.onmessage = function (event) {
         document.getElementById('onReceiveMessage').getElementsByTagName('textarea')[0].value = event.data;
       }
     }
 
-    pc.onconnectionstatechange = function() {
+    pc.onconnectionstatechange = function () {
       document.getElementById('connectionstate').innerHTML = pc.connectionState;
     }
 
-    pc.onsignalingstatechange = function() {
+    pc.onsignalingstatechange = function () {
       document.getElementById('signalingstate').innerHTML = pc.signalingState;
     }
 
-    pc.onicegatheringstatechange = function() {
+    pc.onicegatheringstatechange = function () {
       document.getElementById('icegatheringstate').innerHTML = pc.iceGatheringState;
     }
 
@@ -179,7 +337,7 @@ See a demo: <a href="https://youtu.be/NJdkgs6hYU0">https://youtu.be/NJdkgs6hYU0<
       await pc.setRemoteDescription(JSON.parse(textarea.value));
     });
 
-    pc.onicecandidate = ({candidate}) => {
+    pc.onicecandidate = ({ candidate }) => {
       if (candidate) {
         const json = JSON.stringify(candidate);
         const element = document.getElementById('onicecandidate').getElementsByTagName('textarea')[0];
@@ -205,6 +363,7 @@ See a demo: <a href="https://youtu.be/NJdkgs6hYU0">https://youtu.be/NJdkgs6hYU0<
     setCallback("sendMessage", async textarea => {
       channel.send(textarea.value);
     });
-</script>
+  </script>
 </body>
+
 </html>
